@@ -6,8 +6,13 @@ Required hardware
 =================
 Matrix keypad
 RGB LCD Display and Adafruit LCD Shield
-Coin Slot
+Coin Acceptor
 Arduino
+
+Required software
+=================
+serialport gem
+Arduino Keypad library
 
 Scripts
 =======
