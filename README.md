@@ -26,7 +26,7 @@ jukebox.rb--Ruby script to take Arduino serial output and set to iTunes:
 * Listens for output from Arduino
 * Validates disc and track
 * Sends track # from Arduino to upnext.sh
-* Sends "Now Playing" track # to Arduino for display
+* Sends "Now Playing" track # to Arduino for display (To-Do)
 
 collection.rb--Ruby script that builds an array of all available tracks for validation:
 * Takes a single argument: last disc number
