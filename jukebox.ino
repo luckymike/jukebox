@@ -16,6 +16,9 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 // String for track number
 String track;
+// String for now playing track
+String now_playing;
+boolean stringComplete = false;  // whether the string is complete
 
 //Matrix Keypad Setup
 const byte ROWS = 4; 
@@ -50,22 +53,26 @@ uint8_t i=0;
 void loop() {
   uint8_t buttons = lcd.readButtons();
   while (count == 0) {
-    lcd.setCursor(0,0);  
+    lcd.setCursor(0,0);
+    lcd.setBacklight(TEAL);  
     String credits = String(count);
     lcd.print("CREDITS: " + credits);
     lcd.setCursor(0,1);
     lcd.print("INSERT COIN    ");
     delay(5000);
     lcd.clear();
+    lcd.setBacklight(VIOLET);  
     lcd.setCursor(0,0);  
     lcd.print("NOW PLAYING:");
     lcd.setCursor(0,1);
-    lcd.print("DISC 04 SONG 02");
+    nowPlaying();
+    lcd.print(now_playing);
     delay(5000);
     lcd.clear();
   }
   while (count > 0) {
     String credits = String(count);
+    lcd.setBacklight(GREEN);      
     lcd.setCursor(0,0);
     lcd.print("CREDITS: " + credits + "  ");
     lcd.setCursor(0,1);
@@ -87,9 +94,9 @@ void trackEntry(){
   if (key != NO_KEY) {
     while (track.length() < 4) {
       track += key;
-      Serial.println(track); 
     }
     while (track.length() == 4) {
+      Serial.println(track);
       String key = String(keypad.getKey());
       if (key != NO_KEY) {
         track = key;
@@ -98,7 +105,23 @@ void trackEntry(){
   }    
 }
 
-
-
+void nowPlaying() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    // add it to the inputString:
+    if (now_playing.length() == 4) {
+      now_playing = String(inChar);
+    } 
+    else { 
+      now_playing += inChar;
+    }
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    } 
+  }
+}
 
 
