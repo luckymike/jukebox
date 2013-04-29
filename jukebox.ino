@@ -24,13 +24,22 @@ boolean stringComplete = false;  // whether the string is complete
 const byte ROWS = 4; 
 const byte COLS = 3;
 char keys[ROWS][COLS] = {
-  {'1','2','3'},
-  {'4','5','6'},
-  {'7','8','9'},
-  {'*','0','#'}
+  {
+    '1','2','3'    }
+  ,
+  {
+    '4','5','6'    }
+  ,
+  {
+    '7','8','9'    }
+  ,
+  {
+    '*','0','#'    }
 };
-byte rowPins[ROWS] = { 4, 5, 6, 7 };
-byte colPins[COLS] = { 8, 9, 10 };
+byte rowPins[ROWS] = { 
+  4, 5, 6, 7 };
+byte colPins[COLS] = { 
+  8, 9, 10 };
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
@@ -90,14 +99,27 @@ void addCredits() {
 }
 
 void trackEntry(){
-  String key = String(keypad.getKey());
-  if (key != NO_KEY) {
-    while (track.length() < 4) {
+  while (track.length() < 4) {
+    String key = String(keypad.getKey());
+    if (key != NO_KEY) {
       track += key;
     }
     while (track.length() == 4) {
       Serial.println(track);
-      String key = String(keypad.getKey());
+      if (Serial.read()==0) {
+        lcd.clear();
+        lcd.setBacklight(RED);
+        String credits = String(count);
+        lcd.print("CREDITS: " + credits + "  ");
+        lcd.setCursor(0,1);
+        lcd.print("TRACK NOT FOUND!");
+        delay(2000);
+        lcd.clear();
+        lcd.setBacklight(GREEN);
+      }
+      if (Serial.read()==1) {
+        count = count - 1;
+      }
       if (key != NO_KEY) {
         track = key;
       }
@@ -123,5 +145,7 @@ void nowPlaying() {
     } 
   }
 }
+
+
 
 
