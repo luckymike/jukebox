@@ -15,20 +15,27 @@ collection = JSON.parse(File.read("/tmp/collection.txt"))
 was_playing = String.new
 
 while true do
-  if sp.gets
-    while (selection = sp.gets.chomp) do
-      disc = selection[0..1]
-      track = selection[2..3]
-      chk_disc = disc.to_i-1
-      chk_track = track.to_i-1
-      unless collection[chk_disc].nil?
-        unless collection[chk_disc][chk_track].nil?
-          `./upnext.sh #{disc} #{track}`
-        end
+  if (selection = sp.gets.chomp) 
+    #    puts "checking for track #{selection}"
+    disc = selection[0..1]
+    track = selection[2..3]
+    chk_disc = disc.to_i-1
+    chk_track = track.to_i-1
+    if collection[chk_disc].nil?
+      puts "disc not found"
+      sp.write("n")
+    else
+      if collection[chk_disc][chk_track].nil?
+        puts "track not found"
+        sp.write("n")
+      else
+        puts "playing #{selection}"
+        sp.write("y")
+        `./upnext.sh #{disc} #{track}`
       end
     end
   end
-
+  
   playing = (`osascript -e 'tell application "iTunes" to name of current track as string'`).gsub("\n","")
 
   disc = collection.index(collection.detect { |d| d.include?(playing) })
