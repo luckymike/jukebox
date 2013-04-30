@@ -15,23 +15,28 @@ collection = JSON.parse(File.read("/tmp/collection.txt"))
 was_playing = String.new
 
 while true do
-  if (selection = sp.gets.chomp) 
+  if (selection = sp.gets.chomp)
     #    puts "checking for track #{selection}"
     disc = selection[0..1]
     track = selection[2..3]
-    chk_disc = disc.to_i-1
-    chk_track = track.to_i-1
-    if collection[chk_disc].nil?
-      puts "disc not found"
+    if (disc == "00" || track == "00")
+      puts "invalid selection"
       sp.write("n")
     else
-      if collection[chk_disc][chk_track].nil?
-        puts "track not found"
+      chk_disc = disc.to_i-1
+      chk_track = track.to_i-1
+      if collection[chk_disc].nil?
+        puts "disc not found"
         sp.write("n")
       else
-        puts "playing #{selection}"
-        sp.write("y")
-        `./upnext.sh #{disc} #{track}`
+        if collection[chk_disc][chk_track].nil?
+          puts "track not found"
+          sp.write("n")
+        else
+          puts "playing #{selection}"
+          sp.write("y")
+          `./upnext.sh #{disc} #{track}`
+        end
       end
     end
   end
