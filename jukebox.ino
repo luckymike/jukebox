@@ -16,6 +16,7 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 // String for track number
 String track;
+String nil;
 // String for now playing track
 String now_playing;
 boolean stringComplete = false;  // whether the string is complete
@@ -25,16 +26,16 @@ const byte ROWS = 4;
 const byte COLS = 3;
 char keys[ROWS][COLS] = {
   {
-    '1','2','3'    }
+    '1','2','3'                                        }
   ,
   {
-    '4','5','6'    }
+    '4','5','6'                                        }
   ,
   {
-    '7','8','9'    }
+    '7','8','9'                                        }
   ,
   {
-    '*','0','#'    }
+    '*','0','#'                                        }
 };
 byte rowPins[ROWS] = { 
   4, 5, 6, 7 };
@@ -44,7 +45,7 @@ byte colPins[COLS] = {
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 //Coin/Credit Setup
-int count = 0;
+int count = 1;
 int coinPin = 2;
 int pulse = 0;
 
@@ -68,7 +69,7 @@ void loop() {
     lcd.print("CREDITS: " + credits);
     lcd.setCursor(0,1);
     lcd.print("INSERT COIN    ");
-    delay(5000);
+    delay(2500);
     lcd.clear();
     lcd.setBacklight(VIOLET);  
     lcd.setCursor(0,0);  
@@ -76,7 +77,7 @@ void loop() {
     lcd.setCursor(0,1);
     nowPlaying();
     lcd.print(now_playing);
-    delay(5000);
+    delay(2500);
     lcd.clear();
   }
   while (count > 0) {
@@ -86,45 +87,55 @@ void loop() {
     lcd.print("CREDITS: " + credits + "  ");
     lcd.setCursor(0,1);
     lcd.print("SELECTION: " + track);
-    trackEntry();    
-  }
-}
-
-void addCredits() {
-  pulse = pulse + 1;
-  while (pulse == 5) {
-    count = count + 1; 
-    pulse = 0; 
-  }
-}
-
-void trackEntry(){
-  while (track.length() < 4) {
-    String key = String(keypad.getKey());
-    if (key != NO_KEY) {
-      track += key;
+    if (track.length() < 4) {
+      String key = String(keypad.getKey());
+      if (key != NO_KEY) {
+        track += key;
+        lcd.setCursor(0,1);
+        lcd.print("SELECTION: " + track);
+      }
     }
     while (track.length() == 4) {
       Serial.println(track);
-      if (Serial.read()==0) {
+      delay(1000);
+      char track_found = (char)Serial.read();
+      if (track_found==('n')) {
         lcd.clear();
         lcd.setBacklight(RED);
+        lcd.print("TRACK NOT FOUND!");
+        lcd.setCursor(0,1);
+        lcd.print("Try Again");
+        delay(1000); 
+        track = nil;
+        lcd.clear();
+        break;
+      }
+      else if (track_found==('y')) {
+        count--;
         String credits = String(count);
+        lcd.clear();
+        lcd.setCursor(0,0);
         lcd.print("CREDITS: " + credits + "  ");
         lcd.setCursor(0,1);
-        lcd.print("TRACK NOT FOUND!");
-        delay(2000);
-        lcd.clear();
-        lcd.setBacklight(GREEN);
+        lcd.print("Thank You      ");
+        delay(1000);
+        track = nil;
+        break; 
       }
-      if (Serial.read()==1) {
-        count = count - 1;
-      }
+      String key = String(keypad.getKey());
       if (key != NO_KEY) {
         track = key;
+
       }
     }
-  }    
+  }
+}
+void addCredits() {
+  pulse++;
+  while (pulse == 5) {
+    count = count++; 
+    pulse = 0; 
+  }
 }
 
 void nowPlaying() {
@@ -145,6 +156,23 @@ void nowPlaying() {
     } 
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
