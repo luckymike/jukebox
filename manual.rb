@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+rquire "rubygems"
 require "json"
 
 selection = (ARGV[0])
