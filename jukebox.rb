@@ -17,7 +17,6 @@ was_playing = String.new
 
 while true do
   if (selection = sp.gets.chomp)
-    #    puts "checking for track #{selection}"
     disc = selection[0..1]
     track = selection[2..3]
     if (disc == "00" || track == "00")
@@ -40,30 +39,29 @@ while true do
         end
       end
     end
-  end
-  
-  playing = (`osascript -e 'tell application "iTunes" to name of current track as string'`).gsub("\n","")
+  else
+    playing = (`osascript -e 'tell application "iTunes" to name of current track as string'`).gsub("\n","")
 
-  disc = collection.index(collection.detect { |d| d.include?(playing) })
-  track = collection[disc].index(playing)
-  disc = disc + 1
-  if disc < 10
-    disc = "0" + disc.to_s
-  else
-    disc = disc.to_s
-  end
-  track = track + 1
-  if track < 10
-    track = "0" + track.to_s
-  else
-    track = track.to_s
-  end
-  now_playing = disc + track
-  if now_playing != was_playing
-    sp.write(now_playing)
-    puts now_playing
-    was_playing = now_playing
+    disc = collection.index(collection.detect { |d| d.include?(playing) })
+    track = collection[disc].index(playing)
+    disc = disc + 1
+    if disc < 10
+      disc = "0" + disc.to_s
+    else
+      disc = disc.to_s
+    end
+    track = track + 1
+    if track < 10
+      track = "0" + track.to_s
+    else
+      track = track.to_s
+    end
+    now_playing = disc + track
+    while now_playing != was_playing
+      sp.write(now_playing)
+      puts "Now Playing: #{now_playing}"
+      was_playing = now_playing
+    end
   end
 end
-
 sp.close
