@@ -16,41 +16,32 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 // String for track number
 String track;
+//Empty string to clear other strings
 String nil;
-// String for now playing track
-String now_playing;
+// String for current track
+String current_track;
 boolean stringComplete = false;  // whether the string is complete
 
 //Matrix Keypad Setup
 const byte ROWS = 4; 
 const byte COLS = 3;
 char keys[ROWS][COLS] = {
-  {
-    '1','2','3'                                        }
-  ,
-  {
-    '4','5','6'                                        }
-  ,
-  {
-    '7','8','9'                                        }
-  ,
-  {
-    '*','0','#'                                        }
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
 };
-byte rowPins[ROWS] = { 
-  4, 5, 6, 7 };
-byte colPins[COLS] = { 
-  8, 9, 10 };
+byte rowPins[ROWS] = { 4, 5, 6, 7 };
+byte colPins[COLS] = { 8, 9, 10 };
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 //Coin/Credit Setup
-int count = 1;
+int count = 0;
 int coinPin = 2;
 int pulse = 0;
 
 void setup() {
-  // Debugging output
   Serial.begin(9600);
   // set up the LCD's number of columns and rows: 
   lcd.begin(16, 2);
@@ -69,6 +60,7 @@ void loop() {
     lcd.print("CREDITS: " + credits);
     lcd.setCursor(0,1);
     lcd.print("INSERT COIN    ");
+    Serial.println("done");
     delay(2500);
     lcd.clear();
     lcd.setBacklight(VIOLET);  
@@ -76,7 +68,7 @@ void loop() {
     lcd.print("NOW PLAYING:");
     lcd.setCursor(0,1);
     nowPlaying();
-    lcd.print(now_playing);
+    lcd.print(current_track);
     delay(2500);
     lcd.clear();
   }
@@ -111,7 +103,7 @@ void loop() {
         break;
       }
       else if (track_found==('y')) {
-        count--;
+        count--;     
         String credits = String(count);
         lcd.clear();
         lcd.setCursor(0,0);
@@ -121,11 +113,6 @@ void loop() {
         delay(1000);
         track = nil;
         break; 
-      }
-      String key = String(keypad.getKey());
-      if (key != NO_KEY) {
-        track = key;
-
       }
     }
   }
@@ -139,16 +126,12 @@ void addCredits() {
 }
 
 void nowPlaying() {
+      current_track = nil;
   while (Serial.available()) {
     // get the new byte:
     char inChar = (char)Serial.read(); 
     // add it to the inputString:
-    if (now_playing.length() == 4) {
-      now_playing = String(inChar);
-    } 
-    else { 
-      now_playing += inChar;
-    }
+      current_track += inChar;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
     if (inChar == '\n') {
