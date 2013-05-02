@@ -76,9 +76,9 @@ while true do
     else
       if validate_entry(selection, collection)
         sp.write("y")
-        unless itunes_status("playing")
-          itunes_play("Jukebox")
-        end
+#        unless itunes_status("playing")
+#          itunes_play("Jukebox")
+#        end
       else
         sp.write("n")
       end
