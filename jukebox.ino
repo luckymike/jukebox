@@ -37,7 +37,7 @@ byte colPins[COLS] = { 8, 9, 10 };
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 //Coin/Credit Setup
-int count = 0;
+int count = 1;
 int coinPin = 2;
 int pulse = 0;
 
