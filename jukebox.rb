@@ -54,7 +54,6 @@ def validate_entry(entry, against)
       else
         puts "added #{entry}"
         validates = true
-        `./upnext.sh #{disc} #{track}`
       end
     end
   end
@@ -72,13 +71,15 @@ end
 while true do
   while (selection = sp.gets.chomp)
     if selection == "done"
-        sp.write(now_playing(collection))
+      sp.write(now_playing(collection))
     else
       if validate_entry(selection, collection)
         sp.write("y")
-#        unless itunes_status("playing")
-#          itunes_play("Jukebox")
-#        end
+        `./upnext.sh #{disc} #{track}`
+        sleep(1)
+        #        unless itunes_status("playing")
+        #          itunes_play("Jukebox")
+        #        end
       else
         sp.write("n")
       end
