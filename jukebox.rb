@@ -64,7 +64,7 @@ def validate_entry(entry, against)
 end
 
 def itunes_status(status)
-  `osascript -e 'tell application "iTunes" to player state as string'`.equal?(status)
+  (`osascript -e 'tell application "iTunes" to player state as string'`).gsub("\n","")==(status)
 end
 
 def itunes_play(playlist)
@@ -73,14 +73,14 @@ end
 
 while true do
   while (selection = sp.gets.chomp)
-    if selection == "done"
+    if selection == "done" && itunes_status("playing")
       sp.write(now_playing(collection))
     else
       if validate_entry(selection, collection)
         sp.write("y")
-        #        unless itunes_status("playing")
-        #          itunes_play("Jukebox")
-        #        end
+        unless itunes_status("playing")
+          itunes_play("Jukebox")
+        end
       else
         sp.write("n")
       end
