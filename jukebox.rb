@@ -14,6 +14,8 @@ sp = SerialPort.new(port_str, baud_rate, data_bits, stop_bits, parity)
 
 collection = JSON.parse(File.read("/tmp/collection.txt"))
 
+last_entry = "0000"
+
 def now_playing(against)
   playing = (`osascript -e 'tell application "iTunes" to name of current track as string'`).gsub("\n","")
   disc = against.index(against.detect { |d| d.include?(playing) })
@@ -36,6 +38,7 @@ def now_playing(against)
 end
 
 def validate_entry(entry, against)
+  last_entry = entry
   disc = entry[0..1]
   track = entry[2..3]
   if (disc == "00" || track == "00" || entry.include?("#") || entry.include?("*"))
@@ -76,10 +79,12 @@ while true do
     if selection == "done" && itunes_status("playing")
       sp.write(now_playing(collection))
     else
-      if validate_entry(selection, collection)
-        sp.write("y")
-        unless itunes_status("playing")
-          itunes_play("Jukebox")
+      unless selection == last_entry
+        if validate_entry(selection, collection)
+          sp.write("y")
+          unless itunes_status("playing")
+            itunes_play("Jukebox")
+          end
         end
       else
         sp.write("n")
