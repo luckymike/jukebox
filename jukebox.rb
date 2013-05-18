@@ -38,7 +38,6 @@ def now_playing(against)
 end
 
 def validate_entry(entry, against)
-  last_entry = entry
   disc = entry[0..1]
   track = entry[2..3]
   if (disc == "00" || track == "00" || entry.include?("#") || entry.include?("*"))
@@ -78,10 +77,12 @@ while true do
   while (selection = sp.gets.chomp)
     if selection == "done" && itunes_status("playing")
       sp.write(now_playing(collection))
+      last_entry = "0000"
     else
       unless selection == last_entry
         if validate_entry(selection, collection)
           sp.write("y")
+          last_entry = selection
           unless itunes_status("playing")
             itunes_play("Jukebox")
           end
