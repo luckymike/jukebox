@@ -77,15 +77,17 @@ end
 
 while true do
   while (selection = sp.gets.chomp)
-    if selection == "done" && itunes_status("playing")
-      sp.write(now_playing(collection))
+    if selection == "done"
+      case itunes_status("playing")
+      when true
+        sp.write(now_playing(collection))
+      when false
+        itunes_play("Jukebox")
+      end
     else
       if validate_entry(selection, collection, last_entry)
         sp.write("y")
         last_entry = selection
-        unless itunes_status("playing")
-          itunes_play("Jukebox")
-        end
       else
         sp.write("n")
       end
