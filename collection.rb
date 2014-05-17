@@ -12,8 +12,8 @@ while count <= last
   if disc.size == 1
     disc = "0" + disc
   end
-  tracks = `osascript -e 'tell application "iTunes"' -e ' get name of every track in playlist "#{disc}"' -e 'end tell'`
-  collection << tracks.tr("\n","").split(", ")
+  tracks = `./tracks.sh #{disc}`
+  collection << tracks.tr("\n","").split("||")
   count += 1
 end
 puts collection
